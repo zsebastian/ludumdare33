@@ -1,32 +1,37 @@
 ECS.Events = (function() {
     
-    var handlers = {}
-    var handlerCbs = {}
+    var handlers = {};
+    var handlerCbs = {};
 
-    return 
-    {
+    return {
         handle: function(eventName, handler)
         {
             if (!handlers[eventName])
             {
                 handlers[eventName] = function()
                 {
-                    for(var i = 0; i < handlerCbs[eventName].length; ++i)
+                    var handler = handlerCbs[eventName];
+                    for(var i = 0; i < handler.length; ++i)
                     {
-                        handlerCbs[i](arguments);   
+                        handler[i].apply(null, arguments);   
                     }
                 } 
                 handlerCbs[eventName] = [];
             }
-            handlersCbs[eventName].push(handler);
-        }
+            handlerCbs[eventName].push(handler);
+        },
 
         emit: function(eventName)
         {
             if (handlers[eventName])
             {
-               handlers[eventName].apply(null, [].slice.call(arguments, 1));
+                var args = new Array(arguments.length - 1);
+                for (var i = 0; i < args.length; ++i)
+                {
+                    args[i] = arguments[i + 1];
+                }
+                handlers[eventName].apply(this, args);
             } 
-        } 
-    }
-});
+        }
+    };
+})();

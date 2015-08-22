@@ -1,4 +1,5 @@
 var resourcesToLoad=[
+    'img/tiles.png'
 ]
 
 var canvas = null;
@@ -32,27 +33,19 @@ $(document).ready(function () {
     canvas.width = 480;
     canvas.height = 360;
     state.canvas = canvas;
+    state.keys = keys;
 
     document.body.appendChild(canvas);
     
     window.resources.onReady(init);
     window.resources.load(resourcesToLoad);
 
-    document.addEventListener('keydown', function(event) 
-    {
-        keysDown[event.keyCode] = true;
-    });
-
-    document.addEventListener('keyup', function(event)
-    {
-        keysDown[event.keyCode] = false;
-    });
 });
 
 keysDown = {}
 keysDownOld = {}
 
-function handleKeys(dt)
+function handleKeys()
 {
     for (var index in keysDown)
     {
@@ -63,42 +56,48 @@ function handleKeys(dt)
         }
         if (keysDown[index] && !keysDownOld[index])
         {
-            handleKeyPress(keymap, dt); 
-        }
-        if (keysDown[index])
-        {
-            handleKeyDown(keymap, dt); 
+            handleKeyPress(keymap); 
         }
         if (!keysDown[index] && keysDownOld[index])
         {
-            handleKeyRelease(keymap, dt);
+            handleKeyRelease(keymap);
         }
-        keysDownOld = {};
         keysDownOld[index] = keysDown[index];
     }
 }
 
-function handleKeyDown(keymap, dt)
+function handleKeyRelease(keymap)
 {
-
+    ECS.Events.emit('keyreleased', keymap);
 }
 
-function handleKeyRelease(keymap, dt)
+function handleKeyPress(keymap)
 {
-
-}
-
-function handleKeyPress(keymap, dt)
-{
-
+    ECS.Events.emit('keypressed', keymap);
 }
 
 var state = {};
 
 function init() {
+    var tiles = window.resources.get('img/tiles.png');
     lastTime = Date.now();
-    var e = new ECS.Entity().addComponent(ECS.Components.Transform.make([0, 0]));
+    var e = ECS.Entities.add().
+        has(ECS.Components.Transform.make([32, 16])).
+        has(ECS.Components.Sprite.make(tiles, [16, 16], [0, 0]));
+    
+    e.print();
+
     state.resource = window.resources.get;
+
+    document.addEventListener('keydown', function(event) 
+    {
+        keysDown[event.keyCode] = true;
+    });
+
+    document.addEventListener('keyup', function(event)
+    {
+        keysDown[event.keyCode] = false;
+    });
 
     ECS.init(state);
     main();
@@ -109,8 +108,8 @@ function main()
     var now = Date.now();
     var dt = (now - lastTime) / 1000.0;
 
+    clearColor();
     update(dt);
-    render();
 
     lastTime = now;
     requestAnimFrame(main);
@@ -118,10 +117,11 @@ function main()
 
 function update(dt) 
 {
-    handleKeys(dt);
+    handleKeys();
     ECS.update(state, dt);
 }
 
-function render() {
-
+function clearColor() 
+{
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 }

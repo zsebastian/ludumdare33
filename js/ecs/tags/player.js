@@ -1,0 +1,2 @@
+ECS.registerTag("Player");
+

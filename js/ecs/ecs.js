@@ -1,5 +1,7 @@
 ECS = {};
 ECS.Components = {};
+ECS.Entities = {};
+
 
 (function()
 {
@@ -7,56 +9,81 @@ ECS.Components = {};
 
     var entities = [];
 
-    ECS.addEntity = function(Entity entity)
+    ECS.Entities.add = function(entity)
     {
+        if (!entity)
+        {
+            entity = new ECS.Entity();
+        }
         entities.push(entity); 
+        return entity;
     }
 
-    ECS.getEntities = function* (){
+    ECS.Entities.get = function ()
     {
-        for(int i = 0; i < entities.length; ++i)
+        return (function() 
         {
-            if (entities[i].match(arguments))
+            var i = 0;
+            var current = null;
+            var ret = {};
+            ret.next = function()
             {
-                yield entities[i]; 
+                for(; i < entities.length; ++i)
+                {
+                    if (entities[i].match.apply(entities[i], arguments))
+                    {
+                        current = entities[i];
+                        ++i;
+                        return current;
+                    }
+                }
+                current = null;
+                return current;
             }
+            return ret;
+        })(); 
+    }
+
+    ECS.registeredComponents = nextId;
+
+    ECS.registerComponent = function(name, constructor)
+    {
+        console.log("register component: ", name);
+        var id = nextId++;
+        ECS.registeredComponents = nextId;
+        ECS.Components[name] = {};
+        ECS.Components[name].name = name;
+        ECS.Components[name].familyId = id; 
+        ECS.Components[name].make = function()
+        {
+            var ret = {};
+            ret.name = name;
+            ret.familyId = id;
+            var args = new Array(arguments.length + 1);
+            args[0] = ret;
+            for(var i = 1; i < args.length; ++i)
+            {
+                args[i] = arguments[i - 1];
+            }
+
+            constructor.apply(null, args);
+            return ret;
         }
     }
 
-    ECS.registerComponent = (function(){
-        return function(name, constructor)
+    ECS.registerTag = function()
+    {
+        console.log("register tag: ", name);
+        var id = nextId++;
+        ECS.Tags[name] = {};
+        ECS.Tags[name].name = name;
+        ECS.Tags[name].familyId = id; 
+        ECS.Tags[name].make = function()
         {
-            console.log("register ", name);
-            var id = nextId++;
-            ECS.Components[name] = {};
-            ECS.Components[name].name = name;
-            ECS.Components[name].id = id; 
-            ECS.Components[name].make = function()
-            {
-                var ret = {};
-                ret.name = name;
-                ret.id = id;
-                constructor.apply(null, [ret, arguments]);
-                return ret;
-            }
-        }
-    })();
-
-    ECS.registerTag = (function(){
-        return function(name)
-        {
-            console.log("register ", name);
-            var id = nextId++;
-            ECS.Tags[name] = {};
-            ECS.Tags[name].name = name;
-            ECS.Tags[name].familyId = id; 
-            ECS.Tags[name].make = function()
-            {
-                var ret = {};
-                ret.name = name;
-                ret.id = id;
-                return ret;
-            }
+            var ret = {};
+            ret.name = name;
+            ret.familyId = id;
+            return ret;
         }
     }
 

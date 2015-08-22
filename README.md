@@ -1,4 +1,4 @@
-Stan Dread The Zombie Dead
+Stan Dedd The Zombie Dredd
 ==========================
 
 Entry for Ludum Dare 33. 

@@ -11,50 +11,56 @@ ECS.GenerateId = (function(){
 ECS.Entity = function Entity()
 {
    this.id = ECS.GenerateId(); 
-   this.data = {}
+   this.data = new Array(ECS.registeredComponents);
    
    return this;
-}
+};
 
 ECS.Entity.prototype.has = function (component)
 {
     this.data[component.familyId] = component;
-    this.data[component.name] = component;
-    this['get' + component.name] = component;
-    this['has' + component.name] = function() 
-    {
-        return true;
-    }
+    this['get' + component.name] = function(){ return component; };
+    this['has' + component.name] = function() { return true; };
     return this;
-}
+};
 
 ECS.Entity.prototype.is = function (tag)
 {
     this.data[tag.familyId] = component;
-    this.data[tag.name] = component;
-    this['get' + tag.name] = tag;
-    this['is' + tag.name] = function()
-    {
-        return true; 
-    };
+    this['get' + tag.name] = function() { return tag; }
+    this['is' + tag.name] = function() { return true; };
 
     return this;
-}
+};
 
-ECS.Entity.prototype.match()
+ECS.Entity.prototype.match = function()
 {
     for(var i = 0; i < arguments.length; ++i)
     {
-        if (!this.data[arguments[i])
+        var comp = arguments[i];
+        if (!this.data[comp.familyId])
         {
             return false;
         }
     }
     return true;
-}
+};
 
-ECS.Entity.prototype.toString = function toString() 
+ECS.Entity.prototype.print = function print() 
 {
-    console.log(JSON.stringify(this, null, 4));
+    var str = this.id + ': ';
+    for(var i = 0; i < this.data.length; ++i)
+    {
+        var d = this.data[i];
+        if (d)
+        {
+            str += d.name;
+            if (i != this.data.length - 1)
+            {
+                str += ' | ';
+            }
+        }
+    }
+    console.log(str);
     return this;
-}
+};
