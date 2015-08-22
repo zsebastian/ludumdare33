@@ -1,28 +1,91 @@
+var resourcesToLoad=[
+]
+
 var canvas = null;
 var ctx = null;
 var lastTime = null;
 
+var keys = 
+{
+    down: 0,
+    left: 1,
+    right: 2,
+    up: 3,
+    dash: 4,
+    still: 5,
+    walk: 6
+}
+var keyMapping = 
+{
+    40: keys.down,
+    37: keys.left,
+    39: keys.right,
+    38: keys.up,
+    32: keys.dash,
+    16: keys.still,
+    17: keys.walk
+}
+
 $(document).ready(function () {
-    state = states.modify;
-    console.log(res);
-    session = res.session;
-    map = common.serializeMap(res.map.tiles);
-    level = res.level;
     canvas = document.createElement("canvas");
     ctx = canvas.getContext('2d');
-    var size = common.getMapSize(map);
-    canvas.width = size[1] * tileSize;
-    canvas.height = size[0] * tileSize + 12 * 1.5;
+    canvas.width = 480;
+    canvas.height = 360;
     document.body.appendChild(canvas);
-    resources.load(resourcesToLoad);
-    resources.onReady(init);
+    
+    window.resources.onReady(init);
+    window.resources.load(resourcesToLoad);
 
-    document.addEventListener('keydown', function(event) {
-        handleKeyDown(event.keyCode);
+    document.addEventListener('keydown', function(event) 
+    {
+        keysDown[event.keyCode] = true;
+    });
+
+    document.addEventListener('keyup', function(event)
+    {
+        keysDown[event.keyCode] = false;
     });
 });
 
-function handleKeyDown(keycode)
+keysDown = {}
+keysDownOld = {}
+
+function handleKeys(dt)
+{
+    for (var index in keysDown)
+    {
+        var keymap = keyMapping[index];
+        if (keymap == undefined)
+        {
+            keymap = index;
+        }
+        if (keysDown[index] && !keysDownOld[index])
+        {
+            handleKeyPress(keymap, dt); 
+        }
+        if (keysDown[index])
+        {
+            handleKeyDown(keymap, dt); 
+        }
+        if (!keysDown[index] && keysDownOld[index])
+        {
+            handleKeyRelease(keymap, dt);
+        }
+        keysDownOld[index] = keysDown[index];
+    }
+}
+
+function handleKeyDown(keymap, dt)
+{
+
+}
+
+function handleKeyRelease(keymap, dt)
+{
+
+}
+
+function handleKeyPress(keymap, dt)
 {
 
 }
@@ -32,26 +95,21 @@ function init() {
     main();
 }
 
-function main() {
+function main() 
+{
     var now = Date.now();
     var dt = (now - lastTime) / 1000.0;
 
-    if (state == states.modify || 
-        state == states.move)
-    {
-        if (canvas && map)
-        {
-            update(dt);
-            render();
-        }
-    }
+    update(dt);
+    render();
 
     lastTime = now;
     requestAnimFrame(main);
 };
 
-function update(dt) {
-
+function update(dt) 
+{
+    handleKeys(dt);
 }
 
 function render() {

@@ -11,11 +11,6 @@ var requestAnimFrame = (function(){
         };
 })();
 
-var tilesUrl = 'public/img/tiles.png';
-var resourcesToLoad=[
-    tilesUrl,
-]
-
 (function() {
     var resourceCache = {};
     var loading = [];
@@ -23,7 +18,12 @@ var resourcesToLoad=[
 
     // Load an image url or an array of image urls
     function load(urlOrArr) {
-        if(urlOrArr instanceof Array) {
+        if(urlOrArr instanceof Array) 
+        {
+            if (urlOrArr.length == 0)
+            {
+                readyCallbacks.forEach(function(func) { func(); });
+            }
             urlOrArr.forEach(function(url) {
                 _load(url);
             });

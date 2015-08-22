@@ -1,3 +1,6 @@
+Stan Dread The Zombie Dead
+==========================
 
-Game for Lumud Dare 33. Theme is You Are The Monster.
-====================================================
+Entry for Ludum Dare 33. 
+
+Theme is You Are The Monster. What?
