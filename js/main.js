@@ -31,6 +31,8 @@ $(document).ready(function () {
     ctx = canvas.getContext('2d');
     canvas.width = 480;
     canvas.height = 360;
+    state.canvas = canvas;
+
     document.body.appendChild(canvas);
     
     window.resources.onReady(init);
@@ -71,6 +73,7 @@ function handleKeys(dt)
         {
             handleKeyRelease(keymap, dt);
         }
+        keysDownOld = {};
         keysDownOld[index] = keysDown[index];
     }
 }
@@ -90,8 +93,14 @@ function handleKeyPress(keymap, dt)
 
 }
 
+var state = {};
+
 function init() {
     lastTime = Date.now();
+    var e = new ECS.Entity().addComponent(ECS.Components.Transform.make([0, 0]));
+    state.resource = window.resources.get;
+
+    ECS.init(state);
     main();
 }
 
@@ -110,6 +119,7 @@ function main()
 function update(dt) 
 {
     handleKeys(dt);
+    ECS.update(state, dt);
 }
 
 function render() {
