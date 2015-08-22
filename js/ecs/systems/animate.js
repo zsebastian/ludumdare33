@@ -13,7 +13,6 @@ ECS.System("animate", (function() {
         }
 
         sprite.currentCardinality = state.newCardinality;
-        console.log('what');
         if (dash && (dash.prepareToDash || dash.inDash))
         {
             animateDash(state, sprite, animation, dash, dt);
@@ -36,16 +35,17 @@ ECS.System("animate", (function() {
         }
         else if (dash.inDash)
         {
-            var prog = dash.progress / dash.power;
+            var prog = dash.dashProgress / dash.power;
             frame = 4;
-            if (prog > 0.33)
+            if (prog > 0.45)
             {
                frame = 5;
             } 
-            if (prog > 0.66)
+            if (prog > 0.90)
             {
                frame = 3;
             } 
+        }
 
         sprite.texCoord[1] = (animation.spriteOffset[1] + (frame)) * 16;
 

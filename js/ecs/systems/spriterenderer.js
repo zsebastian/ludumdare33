@@ -17,6 +17,19 @@ ECS.System("spriterenderer",
         {
             var sprite = e.getSprite();
             var position = e.getTransform().position; 
+            var yOffset = 0;
+
+            //This does not belong here;
+            var dash = e.getZombieDash();
+
+            if (dash && dash.inDash)
+            {
+                yOffset = dash.dashProgress / dash.power;
+                yOffset -= 0.5;
+                yOffset *= 2;
+                yOffset = -(-yOffset * yOffset + 1);
+                yOffset *= 5;
+            }
             // The scale seems to mess the tex coords up?
             // The tile above tends to get rendered a lot.
             // Move the coords and the size a little tighter.
@@ -27,7 +40,10 @@ ECS.System("spriterenderer",
                 ctx.drawImage(sprite.img,
                     sprite.texCoord[0] + 0.5, sprite.texCoord[1] + 0.5,
                     sprite.size[0] - 1, sprite.size[1] - 1,
-                    -1 * (position[0]) - sprite.size[0] / 2, position[1] - sprite.size[1] / 2,
+
+                    -1 * (position[0]) - sprite.size[0] / 2,
+                    position[1] - sprite.size[1] / 2 + yOffset,
+
                     sprite.size[0], sprite.size[1]);
                 ctx.restore(); 
             }
@@ -36,7 +52,10 @@ ECS.System("spriterenderer",
                 ctx.drawImage(sprite.img,
                     sprite.texCoord[0] + 0.5, sprite.texCoord[1] + 0.5,
                     sprite.size[0] - 1, sprite.size[1] - 1,
-                    position[0] - sprite.size[0] / 2, position[1] - sprite.size[1] / 2,
+
+                    position[0] - sprite.size[0] / 2, 
+                    position[1] - sprite.size[1] / 2 + yOffset,
+
                     sprite.size[0], sprite.size[1]);
 
             }
