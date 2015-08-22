@@ -1,9 +1,12 @@
 ECS.System("inputhandler",
 {
+    order: 0,
+
     init: function(state)
     {
         var input = state.systems.inputhandler;
-        input.moveaxis = [0, 0];
+        input.axis = [0, 0];
+        input.axisSpeed = 1;
         input.keysdown = {};
         ECS.Events.handle('keyreleased', function(keymap)
         {
@@ -18,34 +21,44 @@ ECS.System("inputhandler",
     update: function(state, dt)
     {
         var input = state.systems.inputhandler;
-        var entities = ECS.Entities.get(ECS.Components.Transform, ECS.Components.Player);
+        var entities = ECS.Entities.get(ECS.Components.Movement, ECS.Tags.Player);
         var e;
-        input.moveaxis = [0, 0];
+        var tempAxis = [0, 0];
         var key = input.keysdown;
         while(e = entities.next())
         {
+            var movement = e.getMovement();
+            movement.isMoving = false;
             if (key[state.keys.down])
             {
-                input.moveaxis[1] += 1;
+                tempAxis[1] += 1;
+                movement.isMoving = true;
             } 
             
             if (key[state.keys.up])
             {
-                input.moveaxis[1] -= 1;
+                tempAxis[1] -= 1;
+                movement.isMoving = true;
             } 
             
             if (key[state.keys.left])
             {
-                input.moveaxis[0] -= 1;
+                tempAxis[0] -= 1;
+                movement.isMoving = true;
             } 
             
             if (key[state.keys.right])
             {
-                input.moveaxis[0] += 1;
+                tempAxis[0] += 1;
+                movement.isMoving = true;
             } 
-            e.getTransform().position[0] += input.moveaxis[0];
-            e.getTransform().position[1] += input.moveaxis[1];
+            tempAxis = Util.Vector.normalized(tempAxis);
+            var acc = input.axisSpeed * dt * movement.acceleration;
+            movement.velocity[0] += tempAxis[0] * acc;
+            movement.velocity[1] += tempAxis[1] * acc;
+            movement.velocity = 
+                Util.Vector.clampMagnitude(
+                    movement.velocity, 0, movement.maxVelocity);
         }
-        input.moveaxis = [0, 0];
     }
 });

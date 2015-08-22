@@ -16,23 +16,6 @@ ECS.Entity = function Entity()
    return this;
 };
 
-ECS.Entity.prototype.has = function (component)
-{
-    this.data[component.familyId] = component;
-    this['get' + component.name] = function(){ return component; };
-    this['has' + component.name] = function() { return true; };
-    return this;
-};
-
-ECS.Entity.prototype.is = function (tag)
-{
-    this.data[tag.familyId] = component;
-    this['get' + tag.name] = function() { return tag; }
-    this['is' + tag.name] = function() { return true; };
-
-    return this;
-};
-
 ECS.Entity.prototype.match = function()
 {
     for(var i = 0; i < arguments.length; ++i)

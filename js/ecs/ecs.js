@@ -1,5 +1,6 @@
 ECS = {};
 ECS.Components = {};
+ECS.Tags = {};
 ECS.Entities = {};
 
 
@@ -9,7 +10,7 @@ ECS.Entities = {};
 
     var entities = [];
 
-    ECS.Entities.add = function(entity)
+    ECS.Entities.create = function(entity)
     {
         if (!entity)
         {
@@ -21,6 +22,11 @@ ECS.Entities = {};
 
     ECS.Entities.get = function ()
     {
+        var key = new Array(arguments.length);
+        for (var i = 0; i < key.length; ++i)
+        {
+            key[i] = arguments[i];
+        }
         return (function() 
         {
             var i = 0;
@@ -30,7 +36,7 @@ ECS.Entities = {};
             {
                 for(; i < entities.length; ++i)
                 {
-                    if (entities[i].match.apply(entities[i], arguments))
+                    if (entities[i].match.apply(entities[i], key))
                     {
                         current = entities[i];
                         ++i;
@@ -46,7 +52,7 @@ ECS.Entities = {};
 
     ECS.registeredComponents = nextId;
 
-    ECS.registerComponent = function(name, constructor)
+    ECS.Component = function(name, constructor)
     {
         console.log("register component: ", name);
         var id = nextId++;
@@ -54,37 +60,50 @@ ECS.Entities = {};
         ECS.Components[name] = {};
         ECS.Components[name].name = name;
         ECS.Components[name].familyId = id; 
-        ECS.Components[name].make = function()
+
+        ECS.Entity.prototype['add' + name] = function()
         {
-            var ret = {};
-            ret.name = name;
-            ret.familyId = id;
+            var component = {};
+            component.name = name;
+            component.familyId = id;
             var args = new Array(arguments.length + 1);
-            args[0] = ret;
+            args[0] = component;
             for(var i = 1; i < args.length; ++i)
             {
                 args[i] = arguments[i - 1];
             }
 
             constructor.apply(null, args);
-            return ret;
-        }
+
+            this.data[id] = component;
+            this['get' + name] = function(){ return component; };
+            this['has' + name] = function(){ return true; }
+            return this;
+        };
+        
+        ECS.Entity.prototype['has' + name] = function(){ return false; }
+        ECS.Entity.prototype['get' + name] = function(){ return null; }
+
     }
 
-    ECS.registerTag = function()
+    ECS.Tag = function(name)
     {
         console.log("register tag: ", name);
         var id = nextId++;
         ECS.Tags[name] = {};
         ECS.Tags[name].name = name;
         ECS.Tags[name].familyId = id; 
-        ECS.Tags[name].make = function()
+        ECS.Entity.prototype["set" + name] = function ()
         {
-            var ret = {};
-            ret.name = name;
-            ret.familyId = id;
-            return ret;
-        }
+            var tag = {};
+            tag.name = name;
+            tag.familyId = id;
+            this.data[tag.familyId] = tag;
+            this['is' + tag.name] = function() { return true; };
+            return this;
+        };
+
+        ECS.Entity.prototype['is' + name] = function(){ return false; }
     }
 
     var systems = [];
@@ -112,7 +131,6 @@ ECS.Entities = {};
     ECS.System = (function(){
         return function(name, obj)
         {
-            console.log("register ", name);
             obj.name = name;
             systems.push(obj);
         }
@@ -127,6 +145,7 @@ ECS.Entities = {};
         for(var i = 0; i < systems.length; ++i)
         {
             var system = systems[i];
+            console.log("init", system.name);
             state.systems[system.name] = {};
             system.init(state);
         }

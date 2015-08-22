@@ -81,9 +81,12 @@ var state = {};
 function init() {
     var tiles = window.resources.get('img/tiles.png');
     lastTime = Date.now();
-    var e = ECS.Entities.add().
-        has(ECS.Components.Transform.make([32, 16])).
-        has(ECS.Components.Sprite.make(tiles, [16, 16], [0, 0]));
+    var e = ECS.Entities.create().
+        setPlayer().
+        addTransform([32, 16]).
+        addSprite(tiles, [16, 16], [0, 0]).
+        addMovement(25, 80, 100).
+        addAnimation([0, 0]);
     
     e.print();
 
@@ -109,7 +112,10 @@ function main()
     var dt = (now - lastTime) / 1000.0;
 
     clearColor();
+    ctx.save();
+    ctx.scale(4, 4);
     update(dt);
+    ctx.restore();
 
     lastTime = now;
     requestAnimFrame(main);

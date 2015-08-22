@@ -1,2 +1,2 @@
-ECS.registerTag("Player");
+ECS.Tag("Player");
 

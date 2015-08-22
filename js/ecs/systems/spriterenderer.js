@@ -1,5 +1,7 @@
 ECS.System("spriterenderer",
 {
+    order: 10,
+
     init: function(state)
     {
         state.systems.spriterenderer.canvas = state.canvas;
@@ -15,11 +17,29 @@ ECS.System("spriterenderer",
         {
             var sprite = e.getSprite();
             var position = e.getTransform().position; 
-            ctx.drawImage(sprite.img,
-                sprite.texCoord[0], sprite.texCoord[1],
-                sprite.size[0], sprite.size[1],
-                position[0] - sprite.size[0] * 2, position[1] - sprite.size[1] * 2,
-                sprite.size[0] * 4, sprite.size[1] * 4);
+            // The scale seems to mess the tex coords up?
+            // The tile above tends to get rendered a lot.
+            // Move the coords and the size a little tighter.
+            if (sprite.mirror)
+            {
+                ctx.save();
+                ctx.scale(-1,1);
+                ctx.drawImage(sprite.img,
+                    sprite.texCoord[0] + 0.5, sprite.texCoord[1] + 0.5,
+                    sprite.size[0] - 1, sprite.size[1] - 1,
+                    -1 * (position[0]) - sprite.size[0] / 2, position[1] - sprite.size[1] / 2,
+                    sprite.size[0], sprite.size[1]);
+                ctx.restore(); 
+            }
+            else
+            {
+                ctx.drawImage(sprite.img,
+                    sprite.texCoord[0] + 0.5, sprite.texCoord[1] + 0.5,
+                    sprite.size[0] - 1, sprite.size[1] - 1,
+                    position[0] - sprite.size[0] / 2, position[1] - sprite.size[1] / 2,
+                    sprite.size[0], sprite.size[1]);
+
+            }
         }
     }
 });
