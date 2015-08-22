@@ -3,25 +3,61 @@ ECS.System("animate", (function() {
         var sprite = e.getSprite();
         var animation = e.getAnimation();
         var movement = e.getMovement();
-        var col = findColumn(state, e.getMovement());
+        var direction = e.getDirection();
+        var dash = e.getZombieDash();
+        var col = findColumn(state, direction);
         if (col)
         {
             sprite.mirror = col[1];
-            sprite.texCoord[0] = col[0] * 16;
+            sprite.texCoord[0] = (animation.spriteOffset[0] + col[0]) * 16;
         }
 
         sprite.currentCardinality = state.newCardinality;
-        if (movement && movement.isMoving)
+        console.log('what');
+        if (dash && (dash.prepareToDash || dash.inDash))
         {
-            return moveAnimation(state, sprite, animation, movement, dt);
+            animateDash(state, sprite, animation, dash, dt);
+        }
+        else if (movement && direction && direction.isMoving)
+        {
+            moveAnimation(state, sprite, animation, movement, dt);
         }
         else
         {
-            sprite.texCoord[1] = 0;
+            sprite.texCoord[1] = animation.spriteOffset[1] * 16;
         }
     }
 
+    var animateDash = function(state, sprite, animation, dash, dt) {
+        var frame = 0;
+        if (dash.prepareToDash)
+        {
+            frame = 3;
+        }
+        else if (dash.inDash)
+        {
+            var prog = dash.progress / dash.power;
+            frame = 4;
+            if (prog > 0.33)
+            {
+               frame = 5;
+            } 
+            if (prog > 0.66)
+            {
+               frame = 3;
+            } 
+
+        sprite.texCoord[1] = (animation.spriteOffset[1] + (frame)) * 16;
+
+    }
+
     var moveAnimation = function(state, sprite, animation, movement, dt) {
+        if (state.isMoving != movement.isMoving)
+        {
+            animation.currentFrameTime = 0;
+            animation.currentFrame = 0;
+        }
+        state.isMoving = movement.isMoving;
         if (state.newCardinality != state.currentCardinality)
         {
 
@@ -49,16 +85,16 @@ ECS.System("animate", (function() {
         {
             frame = 0; 
         }
-        sprite.texCoord[1] = (frame) * 16;
+        sprite.texCoord[1] = (animation.spriteOffset[1] + (frame)) * 16;
 
     }
 
-    var findColumn = function(state, movement) {
-        if (movement)
+    var findColumn = function(state, direction) {
+        if (direction)
         {
             var cardinality = '';
             var tolerance = 0.33;
-            var dir = Util.Vector.clampMagnitude(movement.velocity, 0, 1);
+            dir = direction.direction;
             if (dir[1] > tolerance)
             {
                 cardinality += 's';

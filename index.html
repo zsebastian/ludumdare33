@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>You are the monster</title>
+    <title>Stan Dedd The Zombie Dredd</title>
     <script src="js/jquery-1.11.3.min.js"></script>
     <script src="js/resources.js"></script>
 
@@ -15,19 +15,30 @@
 
     <script src="js/ecs/components/transform.js"></script>
     <script src="js/ecs/components/sprite.js"></script>
-    <script src="js/ecs/tags/player.js"></script>
     <script src="js/ecs/components/movement.js"></script>
     <script src="js/ecs/components/animation.js"></script>
+    <script src="js/ecs/components/direction.js"></script>
+    <script src="js/ecs/components/zombiedash.js"></script>
     
+    <script src="js/ecs/tags/player.js"></script>
+
     <script src="js/ecs/systems/spriterenderer.js"></script>
     <script src="js/ecs/systems/inputhandler.js"></script>
     <script src="js/ecs/systems/mover.js"></script>
     <script src="js/ecs/systems/animate.js"></script>
+    <script src="js/ecs/systems/zombiedasher.js"></script>
 
     <script src="js/main.js"></script>
 </head>
 <body>
  
+    <h4> Instructions </h4>
+    Arrow keys: move. Space: Charge (if implemented).<br>
+    Shift: Sneak (if implemented). Ctrl: Stop (if implemented).<br>
+    Yes I am good at web development, this website is def better than bootstrap.
+
+    <div style='canvas'>
+    </div>
     <div style='position:absolute; bottom: 0; height; 40px'>
         <h3> Created by Sebastian Zander for Ludum Dare 33</h3>
     </div>

@@ -1,8 +1,8 @@
-ECS.Component("Animation", function (ret, moveAnimationSpriteOffset)
+ECS.Component("Animation", function (ret, spriteOffset)
 {
-    ret.moveAnimation = moveAnimationSpriteOffset;
     ret.currentState = 'standing';
     ret.currentFrame = 0;
     ret.currentFrameTime = 0;
     ret.currentCardinality;
+    ret.spriteOffset = spriteOffset;
 });

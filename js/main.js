@@ -14,7 +14,6 @@ var keys =
     up: 3,
     dash: 4,
     still: 5,
-    walk: 6
 }
 var keyMapping = 
 {
@@ -24,7 +23,10 @@ var keyMapping =
     38: keys.up,
     32: keys.dash,
     16: keys.still,
-    17: keys.walk
+    87: keys.up,
+    83: keys.down,
+    65: keys.left,
+    68: keys.right
 }
 
 $(document).ready(function () {
@@ -86,7 +88,9 @@ function init() {
         addTransform([32, 16]).
         addSprite(tiles, [16, 16], [0, 0]).
         addMovement(25, 80, 100).
-        addAnimation([0, 0]);
+        addAnimation([0, 0]).
+        addDirection().
+        addZombieDash(250);
     
     e.print();
 

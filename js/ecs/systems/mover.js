@@ -10,21 +10,29 @@ ECS.System("mover",
     update: function(state, dt)
     {
         var input = state.systems.inputhandler;
-        var entities = ECS.Entities.get(ECS.Components.Transform, ECS.Components.Movement);
+        var entities = ECS.Entities.get(ECS.Components.Transform, 
+                ECS.Components.Movement, 
+                ECS.Components.Direction);
         var e;
-        var key = input.keysdown;
         while(e = entities.next())
         {
             var transform = e.getTransform();
             var movement = e.getMovement();
+            var direction = e.getDirection();
             var velo = movement.velocity;
             var pos = transform.position;
             var len = Util.Vector.magnitude(velo);
-            if (!movement.isMoving)
+            
+            if (!direction.isMoving)
             {
+                var stopForce = movement.stopForce;
+                if (direction.isStopping)
+                {
+                    stopForce *= 4;
+                }
                 var sign = [Math.sign(velo[0]), Math.sign(velo[1])];
-                var diff = [sign[0] * movement.stopForce * dt,
-                    sign[1] * movement.stopForce * dt];
+                var diff = [sign[0] * stopForce * dt,
+                    sign[1] * stopForce * dt];
 
                 if (Math.abs(diff[0]) > Math.abs(velo[0]))
                 {
@@ -43,9 +51,29 @@ ECS.System("mover",
                 {
                     velo[1] -= diff[1];
                 }
+
+                pos[0] += velo[0] * dt;
+                pos[1] += velo[1] * dt;
             }
-            pos[0] += velo[0] * dt;
-            pos[1] += velo[1] * dt;
+            else
+            { 
+                velo[0] += 
+                    movement.acceleration * direction.direction[0] * dt;
+                velo[1] += 
+                    movement.acceleration * direction.direction[1] * dt;
+
+                var maxVel = movement.maxVelocity;
+                if (direction.isSneaking)
+                {
+                    maxVel *= 0.5;
+                }
+                velo = 
+                    Util.Vector.clampMagnitude(velo, 0, maxVel);
+
+                pos[0] += velo[0] * dt;
+                pos[1] += velo[1] * dt;
+                movement.velocity = velo;
+            }
         }
     }
 });

@@ -4,5 +4,4 @@ ECS.Component("Movement", function (ret, maxVelocity, acceleration, stopForce)
     ret.maxVelocity = maxVelocity;
     ret.acceleration = acceleration;
     ret.stopForce = stopForce;
-    ret.isMoving = false
 });
