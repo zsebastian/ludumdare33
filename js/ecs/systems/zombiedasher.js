@@ -8,19 +8,21 @@ ECS.System("zombiedasher",
         ECS.Events.handle('dash', function(e, downTime)
         {
             dash = e.getZombieDash();
-            if(!dash.inDash)
+            if(!dash.inDash && dash.prepareToDash)
             {
                 dash.direction = e.getDirection().direction;
                 dash.prepareToDash = false;
                 dash.inDash = true;
                 dash.dashProgress = 0;
                 dash.power = Math.min(0.25, downTime) + 0.25;
+                dash.energy -= dash.power * 2;
             }
         });
         ECS.Events.handle('preparedash', function(e)
         {
             dash = e.getZombieDash();
-            if(!dash.inDash)
+            console.log(dash.energy);
+            if(!dash.inDash && dash.energy > 0)
             {
                 dash.prepareToDash = true;
             }
@@ -39,6 +41,12 @@ ECS.System("zombiedasher",
             if (dash.prepareToDash || dash.inDash)
             {
                 direction.isMoving = false;
+            }
+            
+            dash.energy += dt;
+            if (dash.energy > 1)
+            {
+                dash.energy = 1;
             }
 
             if (dash.inDash)

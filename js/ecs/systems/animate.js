@@ -16,7 +16,7 @@ ECS.System("animate", (function() {
         sprite.currentCardinality = state.newCardinality;
         if (bat && bat.batting > 0)
         {
-            sprite.texCoord[1] = 5;
+            sprite.texCoord[1] = (animation.spriteOffset[1] + 5) * 16;
         }
         else if (dash && (dash.prepareToDash || dash.inDash))
         {

@@ -5,7 +5,7 @@ ECS.System("aicontroller", (function() {
     {
         var ai = entity.getAI();
         var test = Math.random() * ai.timeInCurrentState;
-        if (Math.random() * ai.timeInCurrentState > 5)
+        if (Math.random() * ai.timeInCurrentState > 2)
         {
             ai.timeInCurrentState = 0;
             ai.currentState = 'patroling';
@@ -17,8 +17,14 @@ ECS.System("aicontroller", (function() {
         }
     };
 
-    state.batting = function(state, entity, dt)
+    states.batting = function(state, entity, dt)
     {
+        var bat = e.getBat();
+        var ai = e.getAI();
+        if(bat.batting < 0)
+        {
+            ai.currentState = 'idling';
+        }
     
     }
 
@@ -28,14 +34,20 @@ ECS.System("aicontroller", (function() {
         var dir = 
             [ai.currentTargetPosition[0] - entity.getTransform().position[0],
             ai.currentTargetPosition[1] - entity.getTransform().position[1]];
-        if (Util.Vector.magnitudeSquared(dir) < 0.5 || ai.timeInCurrentState > 2)
+
+        if (Util.Vector.magnitude(dir) <
+                Util.Vector.magnitude(entity.getTransform().bounds) || 
+                    ai.timeInCurrentState > 2)
         {
             ai.currentState = 'idling';
             ai.timeInCurrentState = 0;
         }
-        dir = Util.Vector.normalized(dir);
-        entity.getDirection().direction = dir;
-        entity.getDirection().isMoving = true;
+        else
+        {
+            dir = Util.Vector.normalized(dir);
+            entity.getDirection().direction = dir;
+            entity.getDirection().isMoving = true;
+        }
     }
     
     return {
@@ -48,21 +60,15 @@ ECS.System("aicontroller", (function() {
         
         update: function(state, dt)
         {
-            var ai = state.systems.ai;
             var entities = ECS.Entities.get(ECS.Components.Direction, ECS.Components.AI);
             while(e = entities.next())
             {
-                var ai = e.getAI();
                 var bat = e.getBat();
                 var move = e.getMovement();
+                var ai = e.getAI();
                 if(bat && bat.batting > 0)
                 {
-                    move.isMoving = false;
                     ai.currentState = 'batting';
-                }
-                else if (bat)
-                {
-                    ai.currentState = 'idling';
                 }
                 ai.timeInCurrentState += dt;
                 states[ai.currentState](state, e, dt);

@@ -28,6 +28,10 @@ ECS.System("spriterenderer",
         {
             camera = state.systems.camera;
         }
+        if (!camera)
+        {
+            return;
+        }
         ctx.save();
         ctx.translate(-(camera[0] - (state.canvasSize[0] / 2)), 
                 -(camera[1] - (state.canvasSize[1] / 2)));

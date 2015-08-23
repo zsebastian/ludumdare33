@@ -94,7 +94,7 @@ function spawnPlayer(chars, bounds)
         addAnimation([0, 0]).
         addDirection().
         addZombieDash(250).
-        addZombieBite(1, 12, [24, 24]).
+        addZombieBite(50, 12, [24, 24]).
         addHealth(1);
     
     e.print();
@@ -105,13 +105,13 @@ function spawnEnemy(chars, bounds)
     var e = ECS.Entities.create().
         setEnemy().
         addTransform(randomPositionOnMap(bounds), bounds).
-        addSprite(chars, [16, 16], [0, 0]).
+        addSprite(chars, [16, 16], [32 * 5, 0]).
         addMovement(25, 80, 100).
         addAnimation([5, 0]).
         addDirection().
         addAI(Util.AI.BatGuy).
         addHealth(2).
-        addBat(10, 18, [36, 36]);
+        addBat(1, 8, [16, 16]);
 
     e.print();
 }

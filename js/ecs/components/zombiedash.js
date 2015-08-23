@@ -6,4 +6,5 @@ ECS.Component("ZombieDash", function (ret, speed)
     ret.prepareToDash = false;
     ret.direction = [0, 0];
     ret.speed = speed;
+    ret.energy = 0;
 });
