@@ -36,6 +36,7 @@ $(document).ready(function () {
     canvas.height = 360;
     state.canvas = canvas;
     state.keys = keys;
+    state.tilemap = new Util.Tilemap(64, 64);
 
     document.body.appendChild(canvas);
     
@@ -118,6 +119,7 @@ function main()
     clearColor();
     ctx.save();
     ctx.scale(4, 4);
+    state.canvasSize = [canvas.width / 4, canvas.height / 4];
     update(dt);
     ctx.restore();
 

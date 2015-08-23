@@ -12,7 +12,35 @@ ECS.System("spriterenderer",
     {
         var entities = ECS.Entities.get(ECS.Components.Sprite, ECS.Components.Transform);
         var ctx = state.systems.spriterenderer.ctx;
+        var canvas = state.systems.spriterenderer.canvas;
         var e;
+        var player = ECS.Entities.get(ECS.Tags.Player).next();
+        var tilemap = state.tilemap;
+        var camera = player.getTransform().position;
+        ctx.save();
+        ctx.translate(-(camera[0] - (state.canvasSize[0] / 2)), 
+                -(camera[1] - (state.canvasSize[1] / 2)));
+
+        camera0 = [camera[0] - state.canvasSize[0] / 2, 
+            camera[1] - state.canvasSize[1] / 2];
+
+        camera1 = [camera[0] + state.canvasSize[0] / 2, 
+            camera[1] + state.canvasSize[1] / 2];
+
+        pos0 = tilemap.getTileFromWorld(camera0);
+        pos1 = tilemap.getTileFromWorld(camera1);
+        for(var x = pos0[0]; x < pos1[0]; ++x)
+        {
+            for(var y = pos0[1]; y < pos1[1]; ++y)
+            {
+                tilemap.set([x, y], 0);
+                var val = tilemap.get([x, y]);
+                
+                ctx.fillStyle = 'red';
+                ctx.fillRect(x * tilemap.w, y * tilemap.h, tilemap.w, tilemap.h);
+            }
+        }
+
         while(e = entities.next())
         {
             var sprite = e.getSprite();
@@ -60,5 +88,6 @@ ECS.System("spriterenderer",
 
             }
         }
+        ctx.restore();
     }
 });
