@@ -23,7 +23,28 @@ ECS.System("animate", (function() {
         }
         else
         {
-            sprite.texCoord[1] = animation.spriteOffset[1] * 16;
+            animation.idling += dt * Math.random();
+            var idleFrame = 0;
+
+            if (animation.idling > 0.8)
+            {
+                idleFrame = 1 + animation.idleDir;
+            }
+            if (animation.idling > 1.0)
+            {
+                if (Math.random() < 0.5)
+                {
+                    animation.idleDir = 0;
+                }
+                else
+                {
+                    animation.idleDir = 1;
+                }
+                animation.idling -= 1.0;
+                idleFrame = 0;
+            }
+            sprite.texCoord[1] = (idleFrame + animation.spriteOffset[1]) * 16;
+
         }
     }
 
@@ -31,19 +52,19 @@ ECS.System("animate", (function() {
         var frame = 0;
         if (dash.prepareToDash)
         {
-            frame = 3;
+            frame = 5;
         }
         else if (dash.inDash)
         {
             var prog = dash.dashProgress / dash.power;
-            frame = 4;
+            frame = 6;
             if (prog > 0.45)
             {
-               frame = 5;
+               frame = 7;
             } 
             if (prog > 0.90)
             {
-               frame = 3;
+               frame = 5;
             } 
         }
 
@@ -71,7 +92,7 @@ ECS.System("animate", (function() {
         var frame;
         if (animation.currentFrame == 0)
         {
-            frame = 1;
+            frame = 3;
         }
         else if (animation.currentFrame == 1)
         {
@@ -79,7 +100,7 @@ ECS.System("animate", (function() {
         }
         else if (animation.currentFrame == 2)
         {
-            frame = 2; 
+            frame = 4; 
         }
         else if (animation.currentFrame == 3)
         {

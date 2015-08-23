@@ -14,6 +14,7 @@ ECS.System("mover",
                 ECS.Components.Movement, 
                 ECS.Components.Direction);
         var e;
+        Util.Collider.useTileMap(state.tilemap);
         while(e = entities.next())
         {
             var transform = e.getTransform();
@@ -52,8 +53,13 @@ ECS.System("mover",
                     velo[1] -= diff[1];
                 }
 
-                pos[0] += velo[0] * dt;
-                pos[1] += velo[1] * dt;
+                var newPos = [0, 0];
+                newPos[0] = pos[0] + velo[0] * dt;
+                newPos[1] = pos[1] + velo[1] * dt;
+
+                Util.Collider.tryMove(transform, newPos);
+
+                movement.velocity = velo;
             }
             else
             { 
@@ -70,8 +76,12 @@ ECS.System("mover",
                 velo = 
                     Util.Vector.clampMagnitude(velo, 0, maxVel);
 
-                pos[0] += velo[0] * dt;
-                pos[1] += velo[1] * dt;
+                var newPos = [0, 0];
+                newPos[0] = pos[0] + velo[0] * dt;
+                newPos[1] = pos[1] + velo[1] * dt;
+
+                Util.Collider.tryMove(transform, newPos);
+
                 movement.velocity = velo;
             }
         }

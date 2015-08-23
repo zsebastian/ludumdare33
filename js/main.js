@@ -1,5 +1,6 @@
 var resourcesToLoad=[
-    'img/tiles.png'
+    'img/chars.png',
+    'img/maptiles.png'
 ]
 
 var canvas = null;
@@ -36,7 +37,9 @@ $(document).ready(function () {
     canvas.height = 360;
     state.canvas = canvas;
     state.keys = keys;
-    state.tilemap = new Util.Tilemap(64, 64);
+    var tm = new Util.Tilemap(16, 16);
+
+    state.tilemap = tm;
 
     document.body.appendChild(canvas);
     
@@ -81,19 +84,63 @@ function handleKeyPress(keymap)
 
 var state = {};
 
-function init() {
-    var tiles = window.resources.get('img/tiles.png');
-    lastTime = Date.now();
+function spawnPlayer(chars, bounds)
+{
     var e = ECS.Entities.create().
         setPlayer().
-        addTransform([32, 16]).
-        addSprite(tiles, [16, 16], [0, 0]).
+        addTransform(randomPositionOnMap(bounds), bounds).
+        addSprite(chars, [16, 16], [0, 0]).
         addMovement(25, 80, 100).
         addAnimation([0, 0]).
         addDirection().
-        addZombieDash(250);
+        addZombieDash(250).
+        addZombieBite(10, [24, 24]);
     
     e.print();
+}
+
+function spawnEnemy(chars, bounds)
+{
+    var e = ECS.Entities.create().
+        setEnemy().
+        addTransform(randomPositionOnMap(bounds), bounds).
+        addSprite(chars, [16, 16], [0, 0]).
+        addMovement(25, 80, 100).
+        addAnimation([5, 0]).
+        addDirection().
+        addAI(Util.AI.BatGuy).
+        addHealth(2);
+
+    e.print();
+}
+
+function randomPositionOnMap(bounds)
+{
+    console.log(state.tilemap);
+    console.log(bounds);
+
+    var w = state.tilemap.w * state.tilemap.tilesize;
+    var h = state.tilemap.h * state.tilemap.tilesize;
+    var x = random(bounds[0], w - bounds[0])
+    var y = random(bounds[1], h - bounds[1])
+    return [x, y];
+}
+
+function random(min, max)
+{
+    return Math.random() * (max - min) + min;
+}
+
+function init() {
+    var chars = window.resources.get('img/chars.png');
+    var maptiles = window.resources.get('img/maptiles.png');
+    lastTime = Date.now();
+    
+    spawnPlayer(chars, [7, 5]);
+    for (var i = 0; i < 8; ++i)
+    {
+        spawnEnemy(chars, [7, 5]);
+    }
 
     state.resource = window.resources.get;
 

@@ -1,0 +1,1 @@
+ECS.Tag("Enemy");

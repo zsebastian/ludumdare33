@@ -8,7 +8,7 @@ ECS.Entities = {};
 {
     var nextId = 0;
 
-    var entities = [];
+    var entities = []; 
 
     ECS.Entities.create = function(entity)
     {
@@ -17,7 +17,32 @@ ECS.Entities = {};
             entity = new ECS.Entity();
         }
         entities.push(entity); 
+        ECS.Events.emit("entitycreated", entity);
         return entity;
+    }
+
+    ECS.Entities.destroy = function(entity)
+    {
+        for (var i = 0; i < entities.length; ++i)
+        {
+            if (entities[i].id == entity.id)
+            {
+                ECS.Events.emit("entitydestroyed", entities[i]);
+                entities.splice(i, 1);
+                return;
+            }
+        }
+    }
+
+    ECS.Entities.find = function(id)
+    {
+        for (var i = 0; i < entities.length; ++i)
+        {
+            if (entities[i].id == id)
+            {
+                return entities[i]; 
+            }
+        }
     }
 
     ECS.Entities.get = function ()
@@ -78,6 +103,7 @@ ECS.Entities = {};
             this.data[id] = component;
             this['get' + name] = function(){ return component; };
             this['has' + name] = function(){ return true; }
+            component.entityId = this.id;
             return this;
         };
         
@@ -100,6 +126,7 @@ ECS.Entities = {};
             tag.familyId = id;
             this.data[tag.familyId] = tag;
             this['is' + tag.name] = function() { return true; };
+            tag.entityId = this.id;
             return this;
         };
 

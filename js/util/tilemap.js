@@ -8,17 +8,49 @@ Util.Tilemap = function Tilemap(w, h, tilesize) {
 
 Util.Tilemap.prototype.get = function(pos)
 {
-    return this.map[this.getIndexFor(pos)];
+    return this.getTileVector(this.map[this.getIndexFor(pos)]);
 }
 
 Util.Tilemap.prototype.set = function(pos, value)
 {
-    this.map[this.getIndexFor(pos)] = value;
+    this.map[this.getIndexFor(pos)] = this.fromTileVector(value);
+}
+
+Util.Tilemap.prototype.isSolid = function(pos)
+{
+    if (!this.inMap(pos))
+    {
+        return true;
+    }
+    var tileVal = this.get(pos);
+    return tileVal[1] == 1;
+} 
+
+Util.Tilemap.prototype.getTileVector = function(val)
+{
+    var y = val >> 16;
+    var x = val & 0x00ff; 
+    return [x, y];
+}
+
+Util.Tilemap.prototype.fromTileVector = function(tile)
+{
+    var ypart = tile[1] << 16;
+    var ret = ypart | tile[0];
+    return ret;
 }
 
 Util.Tilemap.prototype.getIndexFor = function(pos)
 {
-    return pos.x + pos.y * this.w; 
+    return pos[0] + pos[1] * this.w; 
+}
+
+Util.Tilemap.prototype.inMap = function(pos)
+{
+    return !(pos[0] >= this.w ||
+        pos[0] < 0 ||
+        pos[1] >= this.h ||
+        pos[1] < 0)
 }
 
 Util.Tilemap.prototype.getTileFromWorld = function(pos)
@@ -35,11 +67,11 @@ Util.Tilemap.prototype.getTileFromWorld = function(pos)
     }
     if (y >= this.h)
     {
-        x = this.h - 1;
+        y = this.h - 1;
     }
-    if (x < 0)
+    if (y < 0)
     {
-        x = 0;
+        y = 0;
     }
 
     return [x, y]; 

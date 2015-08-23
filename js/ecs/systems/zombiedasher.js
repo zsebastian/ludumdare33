@@ -63,8 +63,10 @@ ECS.System("zombiedasher",
                     var speed = dt * dash.power * dash.power * dash.speed
                         * ((1 - dash.dashProgress / dash.power) + 1);
 
-                    transform.position[0] += dash.direction[0] * speed;
-                    transform.position[1] += dash.direction[1] * speed;
+                    var newPos = [0, 0];
+                    newPos[0] = transform.position[0] + dash.direction[0] * speed;
+                    newPos[1] = transform.position[1] + dash.direction[1] * speed;
+                    Util.Collider.tryMove(transform, newPos);
                 }
             }
         }
