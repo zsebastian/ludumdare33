@@ -17,6 +17,11 @@ ECS.System("aicontroller", (function() {
         }
     };
 
+    state.batting = function(state, entity, dt)
+    {
+    
+    }
+
     states.patroling = function(state, entity, dt)
     {
         var ai = entity.getAI();
@@ -47,8 +52,20 @@ ECS.System("aicontroller", (function() {
             var entities = ECS.Entities.get(ECS.Components.Direction, ECS.Components.AI);
             while(e = entities.next())
             {
-                e.getAI().timeInCurrentState += dt;
-                states[e.getAI().currentState](state, e, dt);
+                var ai = e.getAI();
+                var bat = e.getBat();
+                var move = e.getMovement();
+                if(bat && bat.batting > 0)
+                {
+                    move.isMoving = false;
+                    ai.currentState = 'batting';
+                }
+                else if (bat)
+                {
+                    ai.currentState = 'idling';
+                }
+                ai.timeInCurrentState += dt;
+                states[ai.currentState](state, e, dt);
             }
         },
     }

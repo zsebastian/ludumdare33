@@ -7,6 +7,7 @@ ECS.System("spriterenderer",
         state.systems.spriterenderer.canvas = state.canvas;
         state.systems.spriterenderer.ctx = canvas.getContext('2d');
         state.systems.spriterenderer.maptiles = state.resource('img/maptiles.png');
+        state.systems.camera = null;
     },
     
     update: function(state, dt)
@@ -18,7 +19,15 @@ ECS.System("spriterenderer",
         var player = ECS.Entities.get(ECS.Tags.Player).next();
         var tilemap = state.tilemap;
         var maptiles = state.systems.spriterenderer.maptiles;
-        var camera = player.getTransform().position;
+        if (player)
+        {
+            camera = player.getTransform().position;
+            state.systems.camera = camera;
+        }
+        else
+        {
+            camera = state.systems.camera;
+        }
         ctx.save();
         ctx.translate(-(camera[0] - (state.canvasSize[0] / 2)), 
                 -(camera[1] - (state.canvasSize[1] / 2)));
@@ -31,6 +40,7 @@ ECS.System("spriterenderer",
 
         pos0 = tilemap.getTileFromWorld(camera0);
         pos1 = tilemap.getTileFromWorld(camera1);
+       
         for(var x = pos0[0]; x <= pos1[0]; ++x)
         {
             for(var y = pos0[1]; y <= pos1[1]; ++y)
@@ -60,11 +70,25 @@ ECS.System("spriterenderer",
         {
             e = renderList[i];
             var sprite = e.getSprite();
-            var position = e.getTransform().position; 
+            var transform = e.getTransform();
+            var position = transform.position;
             var yOffset = 0;
+            var health = e.getHealth();
 
             //This does not belong here;
             var dash = e.getZombieDash();
+            ctx.save();
+            if (health)
+            {
+                if (health.blink > -1)
+                {
+                    health.blink -= dt;
+                    if (health.blink > 0)
+                    {
+                        ctx.globalAlpha = 0.1;
+                    }
+                }
+            }
 
             if (dash && dash.inDash)
             {
@@ -80,7 +104,6 @@ ECS.System("spriterenderer",
             // Move the coords and the size a little tighter.
             if (sprite.mirror)
             {
-                ctx.save();
                 ctx.scale(-1,1);
                 ctx.drawImage(sprite.img,
                     sprite.texCoord[0], sprite.texCoord[1] + 0.5,
@@ -90,7 +113,6 @@ ECS.System("spriterenderer",
                     position[1] - sprite.size[1] / 2 + yOffset,
 
                     sprite.size[0], sprite.size[1]);
-                ctx.restore(); 
             }
             else
             {
@@ -102,8 +124,10 @@ ECS.System("spriterenderer",
                     position[1] - sprite.size[1] / 2 + yOffset,
 
                     sprite.size[0], sprite.size[1]);
-
             }
+
+            
+            ctx.restore();
         }
         ctx.restore();
     }

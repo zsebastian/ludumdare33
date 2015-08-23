@@ -6,6 +6,7 @@ ECS.System("animate", (function() {
         var direction = e.getDirection();
         var dash = e.getZombieDash();
         var col = findColumn(state, direction);
+        var bat = e.getBat();
         if (col)
         {
             sprite.mirror = col[1];
@@ -13,6 +14,10 @@ ECS.System("animate", (function() {
         }
 
         sprite.currentCardinality = state.newCardinality;
+        if (bat && bat.batting > 0)
+        {
+            sprite.texCoord[1] = 5;
+        }
         if (dash && (dash.prepareToDash || dash.inDash))
         {
             animateDash(state, sprite, animation, dash, dt);

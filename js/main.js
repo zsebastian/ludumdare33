@@ -37,7 +37,7 @@ $(document).ready(function () {
     canvas.height = 360;
     state.canvas = canvas;
     state.keys = keys;
-    var tm = new Util.Tilemap(16, 16);
+    var tm = new Util.Tilemap(8, 8);
 
     state.tilemap = tm;
 
@@ -94,7 +94,8 @@ function spawnPlayer(chars, bounds)
         addAnimation([0, 0]).
         addDirection().
         addZombieDash(250).
-        addZombieBite(10, [24, 24]);
+        addZombieBite(1, 12, [24, 24]).
+        addHealth(1);
     
     e.print();
 }
@@ -109,7 +110,8 @@ function spawnEnemy(chars, bounds)
         addAnimation([5, 0]).
         addDirection().
         addAI(Util.AI.BatGuy).
-        addHealth(2);
+        addHealth(2).
+        addBat(10, 18, [36, 36]);
 
     e.print();
 }

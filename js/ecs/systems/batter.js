@@ -1,4 +1,4 @@
-ECS.System("zombiebiter",
+ECS.System("batter",
 {
     order: 2,
 
@@ -10,29 +10,33 @@ ECS.System("zombiebiter",
     update: function(state, dt)
     {
         var entities = ECS.Entities.get(
-                ECS.Components.ZombieBite,
+                ECS.Components.Bat,
                 ECS.Components.Transform,
                 ECS.Components.Direction);
         while(e = entities.next())
         {
-            var bite = e.getZombieBite();
+            var bat = e.getBat();
             var transform = e.getTransform();
             var dir = e.getDirection().direction;
             dir = Util.Vector.normalized(dir);
             var upperLeft = [];
             var lowerRight = [];
-            var bitePos = [
-                transform.position[0] + dir[0] * bite.range,
-                transform.position[1] + dir[1] * bite.range];
+            var batPos = [
+                transform.position[0] + dir[0] * bat.range,
+                transform.position[1] + dir[1] * bat.range];
 
-            upperLeft[0] = bitePos[0] - bite.bounds[0] / 2;
-            upperLeft[1] = bitePos[1] - bite.bounds[1] / 2;
-            lowerRight[0] = bitePos[0] + bite.bounds[0] / 2;
-            lowerRight[1] = bitePos[1] + bite.bounds[1] / 2;
+            upperLeft[0] = batPos[0] - bat.bounds[0] / 2;
+            upperLeft[1] = batPos[1] - bat.bounds[1] / 2;
+            lowerRight[0] = batPos[0] + bat.bounds[0] / 2;
+            lowerRight[1] = batPos[1] + bat.bounds[1] / 2;
+            bat.batting -= dt;
+            if (bat.batting < 0)
+            {
+                bat.batting = 0;
 
-            Util.Collider.findIntersectingTransforms(upperLeft, lowerRight, function(otherT)
+                Util.Collider.findIntersectingTransforms(upperLeft, lowerRight, function(otherT)
                 {
-                    if (otherT.entityId != e.id)
+                    if (otherT.entityId != e.id && (bat.batting <= 0))
                     {
                         var other = ECS.Entities.find(otherT.entityId);
                         var health = other.getHealth();
@@ -42,11 +46,12 @@ ECS.System("zombiebiter",
                             {
                                 health.blink = 0.1;
                             }
-                            health.health -= bite.damage * dt; 
+                            health.health -= bat.damage; 
+                            bat.batting = 1;
                         }
                     }
                 });
-            
+            }
         }
     }
 });

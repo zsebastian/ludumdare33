@@ -21,6 +21,10 @@ ECS.Entity.prototype.match = function()
     for(var i = 0; i < arguments.length; ++i)
     {
         var comp = arguments[i];
+        if (!comp)
+        {
+            console.log(comp)
+        }
         if (!this.data[comp.familyId])
         {
             return false;
