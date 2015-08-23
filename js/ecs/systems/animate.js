@@ -18,7 +18,7 @@ ECS.System("animate", (function() {
         {
             sprite.texCoord[1] = 5;
         }
-        if (dash && (dash.prepareToDash || dash.inDash))
+        else if (dash && (dash.prepareToDash || dash.inDash))
         {
             animateDash(state, sprite, animation, dash, dt);
         }

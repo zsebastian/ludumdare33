@@ -89,7 +89,7 @@ function spawnPlayer(chars, bounds)
     var e = ECS.Entities.create().
         setPlayer().
         addTransform(randomPositionOnMap(bounds), bounds).
-        addSprite(chars, [16, 16], [0, 0]).
+        addSprite(chars, [16, 16], [5, 0]).
         addMovement(25, 80, 100).
         addAnimation([0, 0]).
         addDirection().
