@@ -26,6 +26,23 @@ Util.Tilemap.prototype.isSolid = function(pos)
     return tileVal[1] == 1;
 } 
 
+Util.Tilemap.prototype.collides = function(pos, bounds)
+{
+    var upperLeft = this.getTileFromWorld([pos[0] - bounds[0], pos[1] - bounds[1]]);
+    var lowerRight = this.getTileFromWorld([pos[0] + bounds[0], pos[1] + bounds[1]]);
+    for (var x = upperLeft[0]; x <= lowerRight[0]; ++x)
+    {
+        for (var y = upperLeft[1]; y <= lowerRight[1]; ++y)
+        {
+            if (this.isSolid([x, y]))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 Util.Tilemap.prototype.getTileVector = function(val)
 {
     var y = val >> 16;

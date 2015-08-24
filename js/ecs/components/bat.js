@@ -4,5 +4,6 @@ ECS.Component("Bat", function (ret, damage, range, bounds)
     ret.range = range;
     ret.bounds = bounds;
     ret.batting = 0;
+    ret.target = null;
 });
 

@@ -4,6 +4,16 @@ ECS.System("deathculler",
 
     init: function(state)
     {
+        ECS.Events.handle('entitydestroyed', function(e)
+        {
+            var health = e.getHealth();
+            if (health);
+            {
+                var tile = Math.floor(Math.random() * 3);
+                Util.Factory.bloodPool(e.getSprite().img,
+                    e.getTransform().position, tile);
+            }
+        });
 
     },
     

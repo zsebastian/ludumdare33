@@ -21,7 +21,6 @@ ECS.System("zombiedasher",
         ECS.Events.handle('preparedash', function(e)
         {
             dash = e.getZombieDash();
-            console.log(dash.energy);
             if(!dash.inDash && dash.energy > 0)
             {
                 dash.prepareToDash = true;

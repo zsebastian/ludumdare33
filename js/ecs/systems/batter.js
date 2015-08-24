@@ -34,20 +34,33 @@ ECS.System("batter",
             {
                 bat.batting = 0;
 
+                if (bat.target != null)
+                {
+                    var health = bat.target.getHealth();
+                    if (health.blink < 0)
+                    {
+                        health.blink = 0.1;
+                    }
+                    health.health -= bat.damage; 
+                    bat.target = null;
+                }
                 Util.Collider.findIntersectingTransforms(upperLeft, lowerRight, function(otherT)
                 {
                     if (otherT.entityId != e.id && (bat.batting <= 0))
                     {
                         var other = ECS.Entities.find(otherT.entityId);
+                        var team = other.getTeam();
+                        var myTeam = e.getTeam();
                         var health = other.getHealth();
                         if (health)
                         {
-                            if (health.blink < 0)
+                            if (myTeam && team &&
+                                myTeam.team == team.team)
                             {
-                                health.blink = 0.1;
+                                return;
                             }
-                            health.health -= bat.damage; 
-                            bat.batting = 1;
+                            bat.target = other;
+                            bat.batting = 0.2;
                         }
                     }
                 });

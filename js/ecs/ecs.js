@@ -10,6 +10,8 @@ ECS.Entities = {};
 
     var entities = []; 
 
+    var systems = [];
+
     ECS.Entities.create = function(entity)
     {
         if (!entity)
@@ -133,28 +135,6 @@ ECS.Entities = {};
         ECS.Entity.prototype['is' + name] = function(){ return false; }
     }
 
-    var systems = [];
-    //ECS.System is used to register systems.
-    //
-    //Systems must define the following:
-    //  .update(state, dt)
-    //      updates the system
-    //
-    //  .init(state);
-    //      used to initiate the system.
-    //
-    //  .name is added to the object upon registering.
-    //      state-object that is passed to every function 
-    //      will have a .system[name]-object that can be 
-    //      used by the system for whatever. This can be 
-    //      used instead of storing data locally.
-    //
-    //
-    //  In order to listen to events the system may call:
-    //      ECS.handle('nameOfEvent', function(state, args...){})
-    //  To emit an event the system may call:
-    //      ECS.emit('nameOfEvent', state, args...);
-    //
     ECS.System = (function(){
         return function(name, obj)
         {
@@ -165,6 +145,7 @@ ECS.Entities = {};
 
     ECS.init = (function(state)
     {
+        entities = [];
         systems.sort(function(a, b){
             return a.order - b.order;
         });

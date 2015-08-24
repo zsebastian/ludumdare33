@@ -15,6 +15,7 @@
     <script src="js/util/tilemap.js"></script>
     <script src="js/util/collider.js"></script>
     <script src="js/util/ai.js"></script>
+    <script src="js/util/factory.js"></script>
 
     <script src="js/ecs/components/transform.js"></script>
     <script src="js/ecs/components/sprite.js"></script>
@@ -26,6 +27,7 @@
     <script src="js/ecs/components/health.js"></script>
     <script src="js/ecs/components/zombiebite.js"></script>
     <script src="js/ecs/components/bat.js"></script>
+    <script src="js/ecs/components/team.js"></script>
     
     <script src="js/ecs/tags/player.js"></script>
     <script src="js/ecs/tags/enemy.js"></script>
@@ -46,14 +48,17 @@
     <h1> Stan Dedd The Zombie Dredd </h1>
  
     <h4> Instructions </h4>
-    Arrow keys: move. Space: Charge (if implemented).<br>
-    Shift: Sneak (if implemented). Ctrl: Stop (if implemented).<br>
-    Yes I am good at web development, this website is def better than bootstrap.
+    WASD or Arrow keys: move. Space: charge. Shift: stop.<br>
+    You are a zombie called Stan. Bite people by just walking <br>
+    up to them. But be careful! To restart, just refresh. <br>
+    Sometimes you die immediately because you spawned next <br>
+    to an enemy. Just restart. <br>
+    Yes. The grey tiles are buildings.<br>
 
     <div style='canvas'>
     </div>
     <div style='position:absolute; bottom: 0; height; 40px'>
-        <h3> Created by Sebastian Zander for Ludum Dare 33</h3>
+        <h3> Created by Sebastian Zander for Ludum Dare 33. Best site though</h3>
     </div>
 </body>
 </html>

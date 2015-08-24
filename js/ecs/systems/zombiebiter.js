@@ -4,6 +4,14 @@ ECS.System("zombiebiter",
 
     init: function(state)
     {
+        ECS.Events.handle('entitydestroyed', function(e)
+        {
+            var health = e.getHealth();
+            if (health && health.zombieBitten)
+            {
+                Util.Factory.zombie(e.getSprite().img, e.getTransform().position);
+            }
+        });
 
     },
     
@@ -35,13 +43,21 @@ ECS.System("zombiebiter",
                     if (otherT.entityId != e.id)
                     {
                         var other = ECS.Entities.find(otherT.entityId);
+                        var team = other.getTeam();
+                        var myTeam = e.getTeam();
                         var health = other.getHealth();
                         if (health)
                         {
+                            if (myTeam && team &&
+                                myTeam.team == team.team)
+                            {
+                                return;
+                            }
                             if (health.blink < 0)
                             {
                                 health.blink = 0.1;
                             }
+                            health.zombieBitten = true;
                             health.health -= bite.damage * dt; 
                         }
                     }

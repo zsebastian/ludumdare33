@@ -23,6 +23,7 @@ Util.Collider = (function() {
                 throw 'what';
             }
 
+            var collided = false; 
 
             if (diff[0] < 0)
             {
@@ -32,7 +33,8 @@ Util.Collider = (function() {
                 {
                     ret[0] = left[0] * tilesize + tilesize + bound[0];
                     tile = [(ret[0] / tilesize) << 0, (ret[1] / tilemap.tilesize) << 0];
-                    var left = [tile[0] - 1, tile[1]];
+                    left = [tile[0] - 1, tile[1]];
+                    collided = true;
                 }
             } 
             else if (diff[0] > 0)
@@ -43,7 +45,8 @@ Util.Collider = (function() {
                 {
                     ret[0] = right[0] * tilesize - bound[0];
                     tile = [(ret[0] / tilesize) << 0, (ret[1] / tilemap.tilesize) << 0];
-                    var right = [tile[0] + 1, tile[1]];
+                    right = [tile[0] + 1, tile[1]];
+                    collided = true;
                 }
             }
 
@@ -59,7 +62,8 @@ Util.Collider = (function() {
                 {
                     ret[1] = up[1] * tilesize + tilesize + bound[1];
                     tile = [(ret[0] / tilesize) << 0, (ret[1] / tilemap.tilesize) << 0];
-                    var up = [tile[0], tile[1] - 1];
+                    up = [tile[0], tile[1] - 1];
+                    collided = true;
                 }
             } 
             else if (diff[1] > 0)
@@ -70,8 +74,14 @@ Util.Collider = (function() {
                 {
                     ret[1] = down[1] * tilesize - bound[1];
                     tile = [(ret[0] / tilesize) << 0, (ret[1] / tilemap.tilesize) << 0];
-                    var down = [tile[0], tile[1] + 1];
+                    down = [tile[0], tile[1] + 1];
+                    collided = true;
                 }
+            }
+
+            if (collided)
+            {
+                ECS.Events.emit('tilemapcollision', transform);
             }
             
             transform.position = ret;
