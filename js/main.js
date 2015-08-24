@@ -34,7 +34,7 @@ var keyMapping =
 }
 
 $(document).ready(function () {
-    canvas = document.createElement("canvas");
+    canvas = document.getElementById("canvas");
     ctx = canvas.getContext('2d');
     canvas.width = 600;
     canvas.height = 480;
@@ -44,7 +44,7 @@ $(document).ready(function () {
 
     state.tilemap = tm;
 
-    document.body.appendChild(canvas);
+    //document.body.appendChild(canvas);
     
     window.resources.onReady(init);
     window.resources.load(resourcesToLoad);
