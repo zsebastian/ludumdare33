@@ -36,11 +36,11 @@ var keyMapping =
 $(document).ready(function () {
     canvas = document.createElement("canvas");
     ctx = canvas.getContext('2d');
-    canvas.width = 480;
-    canvas.height = 360;
+    canvas.width = 600;
+    canvas.height = 480;
     state.canvas = canvas;
     state.keys = keys;
-    var tm = new Util.Tilemap(16, 16);
+    var tm = new Util.Tilemap(32, 32);
 
     state.tilemap = tm;
 
@@ -167,7 +167,7 @@ function init() {
     }
 
     spawnPlayer(chars);
-    for (var i = 0; i < 16; ++i)
+    for (var i = 0; i < 32; ++i)
     {
         spawnEnemy(chars, [7, 5]);
     }

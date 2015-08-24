@@ -9,7 +9,6 @@ ECS.Entities = {};
     var nextId = 0;
 
     var entities = []; 
-
     var systems = [];
 
     ECS.Entities.create = function(entity)
@@ -146,6 +145,7 @@ ECS.Entities = {};
     ECS.init = (function(state)
     {
         entities = [];
+        ECS.Events.clear();
         systems.sort(function(a, b){
             return a.order - b.order;
         });

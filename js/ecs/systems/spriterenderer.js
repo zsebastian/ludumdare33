@@ -200,7 +200,7 @@ ECS.System("spriterenderer",
                     position[1] - barH / 2 - offset,
                     barW - 2,
                     barH);
-                ctx.fillStyle = 'rgba(0, 0, 127, 64)';
+                ctx.fillStyle = 'rgba(0, 127, 127, 64)';
                 ctx.fillRect(
                     position[0] - barW / 2 + 0.5, 
                     position[1] - barH / 4 - offset,

@@ -4,6 +4,11 @@ ECS.Events = (function() {
     var handlerCbs = {};
 
     return {
+        clear: function()
+        {
+            handlers = [];
+            handerCbs = [];
+        },
         handle: function(eventName, handler)
         {
             if (!handlers[eventName])
